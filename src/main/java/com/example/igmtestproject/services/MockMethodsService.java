@@ -67,7 +67,7 @@ public class MockMethodsService {
     }
 
     /*
-    Returns 200 OK if called less than 20 times over the last 60 seconds, else, returns 429 Too Many Requests
+    Returns 200 OK if called less than 3 times over the last 3 seconds, else, Throws something
      */
     @ExponentialBackoff(maxRetries = 5, initialDelayMillis = 1000, growthRate = 1.05)
     public ResponseEntity<String> getRateLimitedString() throws Throwable {
