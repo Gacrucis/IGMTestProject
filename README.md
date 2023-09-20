@@ -21,7 +21,7 @@ cd IGMTestProject
 Build and run with docker compose
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This command will start the Spring Boot application with `mvn spring-boot:run`
