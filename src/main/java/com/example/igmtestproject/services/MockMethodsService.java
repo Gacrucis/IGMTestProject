@@ -1,5 +1,6 @@
 package com.example.igmtestproject.services;
 
+import com.example.igmtestproject.annotations.ExponentialBackoff;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class MockMethodsService {
     private long lastResetTime;
     private int callCount;
     private static final int MAX_CALLS = 3;
-    private static final long TIME_WINDOW_MILIS = 3000L;
+    private static final long TIME_WINDOW_MILLIS = 3000L;
 
     @Async
     public CompletableFuture<String> getHTMLComponentHead() throws InterruptedException {
@@ -68,12 +69,11 @@ public class MockMethodsService {
     /*
     Returns 200 OK if called less than 20 times over the last 60 seconds, else, returns 429 Too Many Requests
      */
-    public ResponseEntity<String> getRateLimitedString(){
-        long currentTime = System.currentTimeMillis();
-
+    @ExponentialBackoff(maxRetries = 5, initialDelayMillis = 1000, growthRate = 1.05)
+    public ResponseEntity<String> getRateLimitedString() throws Throwable {
         // Check if a minute has passed since the last reset
-        if (currentTime - lastResetTime >= TIME_WINDOW_MILIS) {
-            lastResetTime = currentTime;
+        if (System.currentTimeMillis() - lastResetTime >= TIME_WINDOW_MILLIS) {
+            lastResetTime = System.currentTimeMillis();
             callCount = 0;
         }
 
@@ -83,7 +83,8 @@ public class MockMethodsService {
             return ResponseEntity.ok("OK");
         } else {
             logger.warn("API rate limit reached!");
-            return ResponseEntity.status(429).body("Too Many Requests");
+            // Generic throwable just for example purposes
+            throw new Throwable("Too many requests!");
         }
     }
 }

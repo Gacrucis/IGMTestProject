@@ -34,7 +34,7 @@ class IgmTestProjectApplicationTests {
 	}
 
 	@Test
-	void SecondTaskTest(){
+	void SecondTaskTest() throws Throwable {
 
 		ArrayList<String> apiResults = (ArrayList<String>) rateLimitedService.someIntensiveTask();
 
